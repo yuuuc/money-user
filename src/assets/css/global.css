@@ -1,0 +1,23 @@
+* {
+	margin: 0px;
+	padding: 0px;
+	box-sizing: border-box;
+}
+html,
+body {
+	width: 100%;
+	height: 100%;
+}
+
+#app {
+	width: 100%;
+	height: 100%;
+}
+
+:root {
+	--van-grid-item-text-font-size: 18px;
+}
+
+.account-active > div[role='button'] {
+	background-color: #eee !important;
+}
