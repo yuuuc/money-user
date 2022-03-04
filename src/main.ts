@@ -1,3 +1,11 @@
+/*
+ * @Version:
+ * @Company:
+ * @Author: yu.chen
+ * @Date: 2022/03/02
+ * @Description:
+ * @LastEditTime: 2022/03/04
+ */
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router/router';
