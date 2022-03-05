@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getCurrentInstance, ref, reactive, onBeforeMount } from 'vue';
+import { getCurrentInstance, ref, reactive, onMounted } from 'vue';
 import PickList from '../../components/PickList.vue';
 import { getAccounts } from '../../api/AccountApi';
 import { getMessageFormats } from '../../api/MessageFormatApi';
@@ -13,6 +13,8 @@ const avgIn = ref('');
 const avgOut = ref('');
 const typeIn = ref(0);
 const typeOut = ref(0);
+const barRef = ref<HTMLElement | null>(null);
+const pieRef = ref<HTMLElement | null>(null);
 const barData = {
 	title: {
 		text: '本月收支'
@@ -124,27 +126,16 @@ const pieSetData = () => {
 	initPie();
 };
 
+const echarts = (<any>internalInstance).appContext.config.globalProperties
+	.echarts;
+
 const initBar = () => {
-	const barChart = (<any>(
-		internalInstance
-	)).appContext.config.globalProperties.echarts.init(
-		document.getElementById('bar'),
-		null,
-		{ renderer: 'canvas' }
-	);
-	barChart.clear();
+	const barChart = echarts.init(document.getElementById('bar'));
 	barChart.setOption(barData);
 };
 
 const initPie = () => {
-	const pieChart = (<any>(
-		internalInstance
-	)).appContext.config.globalProperties.echarts.init(
-		document.getElementById('pie'),
-		null,
-		{ renderer: 'svg' }
-	);
-	pieChart.clear();
+	const pieChart = echarts.init(document.getElementById('pie'));
 	pieChart.setOption(pieData);
 };
 
@@ -165,7 +156,6 @@ async function messageFormatData() {
 					'maxOut',
 					maxOut.value == -Infinity ? 0 : maxOut.value
 				);
-				console.log();
 
 				item.description = item.description.replace(
 					'avgIn',
@@ -250,14 +240,13 @@ async function getAccountData() {
 		endTime: end.value,
 		uid
 	});
-	if (res.messageCode == 'ok' && res.data.accounts.length >= 0) {
+	if (res.messageCode == 'ok') {
+		// && res.data.accounts.length >= 0
 		list.splice(0, list.length);
 		const accounts = res.data.accounts;
 		accounts.forEach((item: any) => {
 			list.push(item);
 		});
-
-		console.log(list);
 
 		pieSetData();
 		barSetData();
@@ -272,7 +261,7 @@ const getDate = (year: number, month: number) => {
 	getAccountData();
 };
 
-onBeforeMount(() => {
+onMounted(() => {
 	let maxDate = new Date(year, month + 1, 0).getDate();
 	start.value = `${year}-${month + 1}-${1}`;
 	end.value = `${year}-${month + 1}-${maxDate}`;
@@ -295,7 +284,7 @@ const changeIsOut = () => {
 			>{{ isOut == 0 ? '支出' : '收入' }}</span
 		>
 	</div>
-	<div id="bar"></div>
+	<div id="bar" ref="barRef"></div>
 	<div class="context">
 		<div
 			class="message-item"
@@ -306,7 +295,7 @@ const changeIsOut = () => {
 			{{ item.title }} : {{ item.description }} 元
 		</div>
 	</div>
-	<div id="pie"></div>
+	<div id="pie" ref="pieRef"></div>
 	<div class="context">
 		<div
 			class="message-item"
@@ -321,12 +310,13 @@ const changeIsOut = () => {
 
 <style scoped>
 #bar {
+	width: 100%;
 	height: 300px;
-	position: relative;
 }
 
 #pie {
 	height: 300px;
+	width: 100%;
 }
 .action {
 	position: relative;

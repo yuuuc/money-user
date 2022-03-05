@@ -4,7 +4,7 @@
  * @Author: yu.chen
  * @Date: 2022/03/02
  * @Description:
- * @LastEditTime: 2022/03/04
+ * @LastEditTime: 2022/03/05
  */
 import { createApp } from 'vue';
 import App from './App.vue';
@@ -56,7 +56,7 @@ import {
 	LegendComponent
 } from 'echarts/components';
 import { LabelLayout, UniversalTransition } from 'echarts/features';
-import { CanvasRenderer, SVGRenderer } from 'echarts/renderers';
+import { CanvasRenderer } from 'echarts/renderers';
 
 // 通过 ComposeOption 来组合出一个只有必须组件和图表的 Option 类型
 type ECOption = echarts.ComposeOption<
@@ -81,7 +81,6 @@ echarts.use([
 	LabelLayout,
 	UniversalTransition,
 	CanvasRenderer,
-	SVGRenderer,
 	LegendComponent
 ]);
 
