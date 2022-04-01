@@ -1,7 +1,7 @@
 import axios, { AxiosRequestHeaders } from 'axios';
 const http = axios.create({
 	timeout: 5000,
-	baseURL: 'http://127.0.0.1:8080'
+	baseURL: 'http://82.157.143.98:8080'
 });
 
 http.interceptors.request.use(

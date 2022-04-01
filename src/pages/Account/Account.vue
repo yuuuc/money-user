@@ -13,6 +13,7 @@ import { Account } from '../../entity/Common';
 
 const userStore = useUserStore();
 
+
 const list: any[] = reactive([]);
 const loading = ref(false);
 const finished = ref(false);
@@ -23,6 +24,7 @@ const start = ref('');
 const end = ref('');
 const show = ref(false);
 const newAccountData = reactive(new Account());
+
 
 onBeforeMount(() => {
 	let maxDate = new Date(year, month + 1, 0).getDate();

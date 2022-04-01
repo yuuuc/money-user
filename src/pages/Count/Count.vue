@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { getCurrentInstance, ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import PickList from '../../components/PickList.vue';
 import { getAccounts } from '../../api/AccountApi';
 import { getMessageFormats } from '../../api/MessageFormatApi';
-const internalInstance = getCurrentInstance();
+import echarts from '../../util/echart';
 const isOut = ref(0);
 const barMessage: any[] = reactive([]);
 const pieMessage: any[] = reactive([]);
@@ -15,7 +15,7 @@ const typeIn = ref(0);
 const typeOut = ref(0);
 const barRef = ref<HTMLElement | null>(null);
 const pieRef = ref<HTMLElement | null>(null);
-const barData = {
+const barData = reactive({
 	title: {
 		text: '本月收支'
 	},
@@ -24,7 +24,7 @@ const barData = {
 	},
 	xAxis: {
 		type: 'category',
-		data: [1000]
+		data: ['']
 	},
 	yAxis: {
 		type: 'value',
@@ -32,7 +32,7 @@ const barData = {
 			return 0;
 		},
 		max: function () {
-			return 10000;
+			return 80000;
 		},
 		axisLabel: {
 			rotate: 45
@@ -40,14 +40,13 @@ const barData = {
 	},
 	series: [
 		{
-			name: 'spend',
 			type: 'bar',
-			data: [2000]
+			data: [0]
 		}
 	]
-};
+});
 
-const pieData = {
+const pieData = reactive({
 	tooltip: {
 		trigger: 'item'
 	},
@@ -65,31 +64,22 @@ const pieData = {
 			]
 		}
 	]
-};
+});
 
 const barSetData = () => {
-	let map = new Map<number, number>();
+	let map = new Map<string, number>();
 	let maxDay = new Date(year, month + 1, 0).getDate();
-	for (let i = 1; i <= maxDay; i++) {
-		map.set(i, 0);
-		list.forEach((item) => {
-			let day = new Date(item.time).getDate();
-			if (i == day) {
-				let temp = map.get(i);
-				if (item.isOut === isOut.value) {
-					map.set(i, <number>temp + Number(item.money));
-				}
-			}
-		});
-	}
-	let entries = [...map.entries()];
-	let xData = entries.map((item) => {
-		return item[0];
-	});
-	let yData = entries.map((item) => {
-		return item[1];
-	});
+	const xData = Array.from(Array(maxDay), (v, k) => k.toString());
+	const yData = Array(maxDay).fill(0);
 
+	list.forEach((item) => {
+		// ios 系统 和安卓系统存在兼容问题
+		const time = item.time.replaceAll('-', '/');
+		let day = new Date(time).getDate();
+		if (item.isOut === isOut.value) {
+			yData[day] = Math.round(yData[day] + Number(item.money));
+		}
+	});
 	barData.xAxis.data = xData;
 	barData.series[0].data = yData;
 
@@ -126,16 +116,36 @@ const pieSetData = () => {
 	initPie();
 };
 
-const echarts = (<any>internalInstance).appContext.config.globalProperties
-	.echarts;
-
 const initBar = () => {
-	const barChart = echarts.init(document.getElementById('bar'));
+	const option = {
+		title: {
+			text: 'ECharts 入门示例'
+		},
+		tooltip: {},
+		legend: {
+			data: ['销量']
+		},
+		xAxis: {
+			data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
+		},
+		yAxis: {},
+		series: [
+			{
+				name: '销量',
+				type: 'bar',
+				data: [5, 20, 36, 10, 10, 20]
+			}
+		]
+	};
+	// console.log(barData);
+	// console.log(option);
+
+	const barChart = echarts.init(barRef.value as HTMLElement);
 	barChart.setOption(barData);
 };
 
 const initPie = () => {
-	const pieChart = echarts.init(document.getElementById('pie'));
+	const pieChart = echarts.init(pieRef.value as HTMLElement);
 	pieChart.setOption(pieData);
 };
 
@@ -229,7 +239,7 @@ const formatComputed = () => {
 const list: any[] = reactive([]);
 const currentDate = ref(new Date());
 const year = currentDate.value.getFullYear();
-const month = currentDate.value.getMonth();
+const month = currentDate.value.getMonth() - 1;
 const start = ref('');
 const end = ref('');
 // 获取数据 accounts

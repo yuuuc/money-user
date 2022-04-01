@@ -126,14 +126,14 @@ export class User {
 	name: string;
 	username: string;
 	tel: string;
-	password: string;
+	password: string | null;
 
 	constructor(
 		uid: string = '',
 		name: string = '',
 		username: string = '',
 		tel: string = '',
-		password: string = ''
+		password: string | null = null
 	) {
 		this.uid = uid;
 		this.name = name;

@@ -6,6 +6,7 @@ const Account = () => import('../pages/Account/Account.vue');
 const User = () => import('../pages/User/User.vue');
 const Count = () => import('../pages/Count/Count.vue');
 const Register = () => import('../pages/Register/Register.vue');
+const Money = () => import('../pages/Money/Money.vue');
 
 const routes = [
 	{
@@ -41,6 +42,11 @@ const routes = [
 				path: 'count',
 				name: 'count',
 				component: Count
+			},
+			{
+				path: 'money',
+				name: 'money',
+				component: Money
 			}
 		]
 	}

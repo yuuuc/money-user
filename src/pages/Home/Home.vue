@@ -24,6 +24,11 @@ watch(active, () => {
 			router.replace('/home/user');
 			title.value = '我的信息';
 			break;
+
+		case '/home/money':
+			router.replace('/home/money');
+			title.value = '理财信息';
+			break;
 	}
 });
 
@@ -52,6 +57,7 @@ const logout = () => {
 		<van-tabbar v-model="active">
 			<van-tabbar-item name="/home/account" icon="home-o">记录</van-tabbar-item>
 			<van-tabbar-item name="/home/count" icon="search">统计</van-tabbar-item>
+			<van-tabbar-item name="/home/money" icon="refund-o">理财</van-tabbar-item>
 			<van-tabbar-item name="/home/user" van-tabbar-item icon="friends-o"
 				>用户</van-tabbar-item
 			>
